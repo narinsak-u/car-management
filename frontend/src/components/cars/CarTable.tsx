@@ -11,6 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogPopup,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogClose,
+} from "@/components/ui/alert-dialog";
 
 const statusConfig: Record<CarStatus, { label: string; className: string }> = {
   available: {
@@ -29,9 +37,10 @@ const statusConfig: Record<CarStatus, { label: string; className: string }> = {
 
 interface CarTableProps {
   cars: Car[];
+  onDelete?: (car: Car) => void;
 }
 
-export function CarTable({ cars }: CarTableProps) {
+export function CarTable({ cars, onDelete }: CarTableProps) {
   return (
     <Table>
       <TableHeader>
@@ -88,6 +97,7 @@ export function CarTable({ cars }: CarTableProps) {
             <TableCell className="text-right">
               <div className="flex justify-end gap-1">
                 <Button
+                  className="cursor-pointer"
                   variant="ghost"
                   size="sm"
                   render={<Link to={`/cars/${car.id}/edit`} />}
@@ -95,14 +105,47 @@ export function CarTable({ cars }: CarTableProps) {
                   <Pencil data-icon="inline-start" />
                   Edit
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 data-icon="inline-start" />
-                  Delete
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive cursor-pointer hover:text-destructive"
+                      >
+                        <Trash2 data-icon="inline-start" />
+                        Delete
+                      </Button>
+                    }
+                  />
+                  <AlertDialogPopup>
+                    <AlertDialogTitle>Delete Vehicle</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete{" "}
+                      <span className="font-medium text-foreground">
+                        {car.registrationNumber}
+                      </span>
+                      ? This action cannot be undone.
+                    </AlertDialogDescription>
+                    <div className="mt-6 flex justify-end gap-2">
+                      <AlertDialogClose
+                        render={
+                          <Button variant="outline">Cancel</Button>
+                        }
+                      />
+                      <AlertDialogClose
+                        render={
+                          <Button
+                            variant="destructive"
+                            onClick={() => onDelete?.(car)}
+                          >
+                            Delete
+                          </Button>
+                        }
+                      />
+                    </div>
+                  </AlertDialogPopup>
+                </AlertDialog>
               </div>
             </TableCell>
           </TableRow>

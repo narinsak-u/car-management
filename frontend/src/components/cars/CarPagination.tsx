@@ -26,9 +26,8 @@ export function CarPagination({
 }: CarPaginationProps) {
   return (
     <div className="flex items-center justify-between mt-4">
-      <p className="text-sm text-muted-foreground">
-        Showing{" "}
-        <span className="font-medium">{showingFrom}</span> -{" "}
+      <p className="text-sm text-muted-foreground whitespace-nowrap">
+        Showing <span className="font-medium">{showingFrom}</span> -{" "}
         <span className="font-medium">{showingTo}</span> of{" "}
         <span className="font-medium">{totalFiltered}</span>
       </p>
