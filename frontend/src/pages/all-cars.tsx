@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
+import type { Car } from "@/types/car";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { mockCars } from "@/data/cars";
 import { useCarFilter } from "@/hooks/useCarFilter";
+import { useDeleteCar } from "@/hooks/useCars";
 import { CarStatsCards } from "@/components/cars/CarStatsCards";
 import { CarFilters } from "@/components/cars/CarFilters";
 import { CarTable } from "@/components/cars/CarTable";
@@ -16,12 +17,31 @@ export function AllCarsPage() {
     currentPage,
     setCurrentPage,
     totalPages,
-    paginatedCars,
+    cars,
     stats,
+    loading,
+    error,
     showingFrom,
     showingTo,
     totalFiltered,
-  } = useCarFilter(mockCars);
+    refresh,
+  } = useCarFilter();
+
+  const deleteCar = useDeleteCar();
+
+  const handleDelete = (car: Car) => {
+    deleteCar.mutate(car.id, { onSuccess: () => refresh() });
+  };
+
+  if (error) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -45,7 +65,7 @@ export function AllCarsPage() {
           <CarFilters search={search} onSearchChange={setSearch} />
 
           <div className="mt-4">
-            <CarTable cars={paginatedCars} />
+            <CarTable cars={cars} onDelete={handleDelete} loading={loading} />
           </div>
 
           <CarPagination

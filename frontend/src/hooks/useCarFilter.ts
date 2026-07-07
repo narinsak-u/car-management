@@ -1,62 +1,60 @@
-import { useMemo, useState } from "react";
-import type { Car } from "@/types/car";
+import { useState, useCallback, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCarList, useCarStats } from "@/hooks/useCars";
+import { carKeys } from "@/api/queryKeys";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
-export function useCarFilter(cars: Car[]) {
-  const [search, setSearch] = useState("");
+export function useCarFilter() {
+  const [search, setSearchRaw] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const queryClient = useQueryClient();
 
-  const filteredCars = useMemo(
-    () =>
-      cars.filter(
-        (car) =>
-          car.registrationNumber.toLowerCase().includes(search.toLowerCase()) ||
-          car.manufacturer.toLowerCase().includes(search.toLowerCase()) ||
-          car.model.toLowerCase().includes(search.toLowerCase()),
-      ),
-    [cars, search],
-  );
+  const queryParams = {
+    page: currentPage,
+    search: search || undefined,
+  };
 
-  const totalPages = Math.ceil(filteredCars.length / ITEMS_PER_PAGE);
+  const { data: listResult, isLoading, error } = useCarList(queryParams);
+  const { data: stats } = useCarStats();
 
-  const paginatedCars = useMemo(
-    () =>
-      filteredCars.slice(
-        (currentPage - 1) * ITEMS_PER_PAGE,
-        currentPage * ITEMS_PER_PAGE,
-      ),
-    [filteredCars, currentPage],
-  );
+  const setSearch = useCallback((value: string) => {
+    setSearchRaw(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setCurrentPage(1);
+    }, 300);
+  }, []);
 
-  const stats = useMemo(
-    () => ({
-      total: cars.length,
-      active: cars.filter((c) => c.status === "available").length,
-      maintenance: cars.filter((c) => c.status === "maintenance").length,
-      inTransit: cars.filter((c) => c.status === "in_transit").length,
-    }),
-    [cars],
-  );
+  const setPage = useCallback((page: number) => {
+    setCurrentPage(page);
+  }, []);
 
-  const showingFrom = (currentPage - 1) * ITEMS_PER_PAGE + 1;
-  const showingTo = Math.min(currentPage * ITEMS_PER_PAGE, filteredCars.length);
+  const refresh = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: carKeys.all });
+  }, [queryClient]);
+
+  const totalFiltered = listResult?.meta.total ?? 0;
+  const totalPages = listResult?.meta.totalPages ?? 0;
+  const showingFrom =
+    totalFiltered === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
+  const showingTo = Math.min(currentPage * ITEMS_PER_PAGE, totalFiltered);
 
   return {
     search,
-    setSearch: (value: string) => {
-      setSearch(value);
-      setCurrentPage(1);
-    },
+    setSearch,
     currentPage,
-    setCurrentPage,
+    setCurrentPage: setPage,
     totalPages,
-    filteredCars,
-    paginatedCars,
-    stats,
+    cars: listResult?.data ?? [],
+    stats: stats ?? { total: 0, active: 0, maintenance: 0, inTransit: 0 },
+    loading: isLoading,
+    error: error?.message ?? null,
     showingFrom,
     showingTo,
-    totalFiltered: filteredCars.length,
+    totalFiltered,
     ITEMS_PER_PAGE,
+    refresh,
   };
 }

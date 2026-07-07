@@ -8,8 +8,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { manufacturers } from "@/data/cars";
 import type { CarStatus } from "@/types/car";
+
+const MANUFACTURERS = [
+  "Mercedes-Benz",
+  "Ford",
+  "Volkswagen",
+  "Iveco",
+  "Toyota",
+  "MAN",
+  "Renault",
+  "Fiat",
+  "Peugeot",
+  "Citroën",
+  "Hyundai",
+  "Nissan",
+];
 
 const STATUS_OPTIONS: { value: CarStatus; label: string }[] = [
   { value: "available", label: "Available" },
@@ -72,7 +86,7 @@ export function CarFormGeneralInfo({
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {manufacturers.map((m) => (
+                {MANUFACTURERS.map((m) => (
                   <SelectItem key={m} value={m}>
                     {m}
                   </SelectItem>

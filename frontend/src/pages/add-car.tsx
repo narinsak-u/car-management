@@ -10,6 +10,8 @@ import { CarFormNotes } from "@/components/cars/CarFormNotes";
 export function AddCarPage() {
   const {
     isEditing,
+    loading,
+    error,
     registrationNumber,
     setRegistrationNumber,
     manufacturer,
@@ -44,12 +46,22 @@ export function AddCarPage() {
             <X data-icon="inline-start" />
             Cancel
           </Button>
-          <Button size="lg" onClick={handleSubmit}>
+          <Button size="lg" onClick={handleSubmit} disabled={loading}>
             <Check data-icon="inline-start" />
-            {isEditing ? "Update Entry" : "Complete Entry"}
+            {loading
+              ? "Saving..."
+              : isEditing
+                ? "Update Entry"
+                : "Complete Entry"}
           </Button>
         </div>
       </div>
+
+      {error && (
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive text-sm">
+          {error}
+        </div>
+      )}
 
       <Card>
         <CardContent className="p-6">

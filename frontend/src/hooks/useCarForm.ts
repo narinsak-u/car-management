@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useCar, useCreateCar, useUpdateCar } from "@/hooks/useCars";
 import type { CarStatus } from "@/types/car";
-import { mockCars } from "@/data/cars";
 
 export function useCarForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = Boolean(id);
+  const carId = isEditing ? Number(id) : undefined;
+
+  const { data: existingCar, isLoading: loadingCar } = useCar(carId);
+  const createCar = useCreateCar();
+  const updateCar = useUpdateCar();
 
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [manufacturer, setManufacturer] = useState("");
@@ -17,36 +22,46 @@ export function useCarForm() {
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
-    if (isEditing && id) {
-      const car = mockCars.find((c) => c.id === id);
-      if (car) {
-        setRegistrationNumber(car.registrationNumber);
-        setManufacturer(car.manufacturer);
-        setModel(car.model);
-        setYear(String(car.year));
-        setColor(car.color);
-        setStatus(car.status);
-        setNotes(car.notes || "");
-      }
+    if (existingCar) {
+      setRegistrationNumber(existingCar.registrationNumber);
+      setManufacturer(existingCar.manufacturer);
+      setModel(existingCar.model);
+      setYear(String(existingCar.year));
+      setColor(existingCar.color);
+      setStatus(existingCar.status);
+      setNotes(existingCar.notes || "");
     }
-  }, [id, isEditing]);
+  }, [existingCar]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log({
+  const error = createCar.error?.message ?? updateCar.error?.message ?? null;
+  const saving = createCar.isPending || updateCar.isPending;
+
+  const handleSubmit = async (e: { preventDefault?: () => void }) => {
+    e.preventDefault?.();
+
+    const data = {
       registrationNumber,
       manufacturer,
       model,
       year: Number(year),
       color,
       status,
-      notes,
-    });
+      notes: notes || undefined,
+    };
+
+    if (isEditing && id) {
+      await updateCar.mutateAsync({ id: Number(id), data });
+    } else {
+      await createCar.mutateAsync(data);
+    }
+
     navigate("/cars");
   };
 
   return {
     isEditing,
+    loading: loadingCar || saving,
+    error,
     registrationNumber,
     setRegistrationNumber,
     manufacturer,

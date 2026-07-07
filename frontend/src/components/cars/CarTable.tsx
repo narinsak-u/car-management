@@ -38,9 +38,10 @@ const statusConfig: Record<CarStatus, { label: string; className: string }> = {
 interface CarTableProps {
   cars: Car[];
   onDelete?: (car: Car) => void;
+  loading?: boolean;
 }
 
-export function CarTable({ cars, onDelete }: CarTableProps) {
+export function CarTable({ cars, onDelete, loading }: CarTableProps) {
   return (
     <Table>
       <TableHeader>
@@ -57,99 +58,117 @@ export function CarTable({ cars, onDelete }: CarTableProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {cars.map((car) => (
-          <TableRow key={car.id}>
-            <TableCell>
-              <input
-                type="checkbox"
-                className="size-4 rounded border-gray-300"
-              />
-            </TableCell>
-            <TableCell>
-              <span className="font-mono font-medium">
-                {car.registrationNumber}
-              </span>
-            </TableCell>
-            <TableCell>
-              <div>
-                <p className="font-medium">{car.manufacturer}</p>
-                <p className="text-sm text-muted-foreground">{car.model}</p>
-              </div>
-            </TableCell>
-            <TableCell className="hidden sm:table-cell">{car.year}</TableCell>
-            <TableCell className="hidden md:table-cell">
-              <div className="flex items-center gap-2">
-                <span
-                  className="size-4 rounded-full border shrink-0"
-                  style={{ backgroundColor: car.color.toLowerCase() }}
-                />
-                <span>{car.color}</span>
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge
-                variant="secondary"
-                className={statusConfig[car.status].className}
-              >
-                {statusConfig[car.status].label}
-              </Badge>
-            </TableCell>
-            <TableCell className="text-right">
-              <div className="flex justify-end gap-1">
-                <Button
-                  className="cursor-pointer"
-                  variant="ghost"
-                  size="sm"
-                  render={<Link to={`/cars/${car.id}/edit`} />}
-                >
-                  <Pencil data-icon="inline-start" />
-                  Edit
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger
-                    render={
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive cursor-pointer hover:text-destructive"
-                      >
-                        <Trash2 data-icon="inline-start" />
-                        Delete
-                      </Button>
-                    }
-                  />
-                  <AlertDialogPopup>
-                    <AlertDialogTitle>Delete Vehicle</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete{" "}
-                      <span className="font-medium text-foreground">
-                        {car.registrationNumber}
-                      </span>
-                      ? This action cannot be undone.
-                    </AlertDialogDescription>
-                    <div className="mt-6 flex justify-end gap-2">
-                      <AlertDialogClose
-                        render={
-                          <Button variant="outline">Cancel</Button>
-                        }
-                      />
-                      <AlertDialogClose
-                        render={
-                          <Button
-                            variant="destructive"
-                            onClick={() => onDelete?.(car)}
-                          >
-                            Delete
-                          </Button>
-                        }
-                      />
-                    </div>
-                  </AlertDialogPopup>
-                </AlertDialog>
-              </div>
+        {loading ? (
+          <TableRow>
+            <TableCell
+              colSpan={7}
+              className="text-center py-8 text-muted-foreground"
+            >
+              Loading...
             </TableCell>
           </TableRow>
-        ))}
+        ) : cars.length === 0 ? (
+          <TableRow>
+            <TableCell
+              colSpan={7}
+              className="text-center py-8 text-muted-foreground"
+            >
+              No vehicles found.
+            </TableCell>
+          </TableRow>
+        ) : (
+          cars.map((car) => (
+            <TableRow key={car.id}>
+              <TableCell>
+                <input
+                  type="checkbox"
+                  className="size-4 rounded border-gray-300"
+                />
+              </TableCell>
+              <TableCell>
+                <span className="font-mono font-medium">
+                  {car.registrationNumber}
+                </span>
+              </TableCell>
+              <TableCell>
+                <div>
+                  <p className="font-medium">{car.manufacturer}</p>
+                  <p className="text-sm text-muted-foreground">{car.model}</p>
+                </div>
+              </TableCell>
+              <TableCell className="hidden sm:table-cell">{car.year}</TableCell>
+              <TableCell className="hidden md:table-cell">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="size-4 rounded-full border shrink-0"
+                    style={{ backgroundColor: car.color.toLowerCase() }}
+                  />
+                  <span>{car.color}</span>
+                </div>
+              </TableCell>
+              <TableCell>
+                <Badge
+                  variant="secondary"
+                  className={statusConfig[car.status].className}
+                >
+                  {statusConfig[car.status].label}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-right">
+                <div className="flex justify-end gap-1">
+                  <Button
+                    className="cursor-pointer"
+                    variant="ghost"
+                    size="sm"
+                    render={<Link to={`/cars/${car.id}/edit`} />}
+                  >
+                    <Pencil data-icon="inline-start" />
+                    Edit
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger
+                      render={
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive cursor-pointer hover:text-destructive"
+                        >
+                          <Trash2 data-icon="inline-start" />
+                          Delete
+                        </Button>
+                      }
+                    />
+                    <AlertDialogPopup>
+                      <AlertDialogTitle>Delete Vehicle</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete{" "}
+                        <span className="font-medium text-foreground">
+                          {car.registrationNumber}
+                        </span>
+                        ? This action cannot be undone.
+                      </AlertDialogDescription>
+                      <div className="mt-6 flex justify-end gap-2">
+                        <AlertDialogClose
+                          render={<Button variant="outline">Cancel</Button>}
+                        />
+                        <AlertDialogClose
+                          render={
+                            <Button
+                              variant="destructive"
+                              onClick={() => onDelete?.(car)}
+                            >
+                              Delete
+                            </Button>
+                          }
+                        />
+                      </div>
+                    </AlertDialogPopup>
+                  </AlertDialog>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))
+        )}
       </TableBody>
     </Table>
   );
