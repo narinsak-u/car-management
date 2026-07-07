@@ -14,20 +14,27 @@ export class CarsRepository {
 
   async create(dto: CreateCarDto) {
     const now = new Date().toISOString();
+    await this.db.insert(schema.cars).values({
+      manufacturer: dto.manufacturer,
+      model: dto.model,
+      year: dto.year,
+      registrationNumber: dto.registrationNumber,
+      color: dto.color,
+      status: dto.status,
+      notes: dto.notes ?? null,
+      createdAt: now,
+      updatedAt: now,
+    });
+
     const [car] = await this.db
-      .insert(schema.cars)
-      .values({
-        manufacturer: dto.manufacturer,
-        model: dto.model,
-        year: dto.year,
-        registrationNumber: dto.registrationNumber,
-        color: dto.color,
-        status: dto.status,
-        notes: dto.notes ?? null,
-        createdAt: now,
-        updatedAt: now,
-      })
-      .returning();
+      .select()
+      .from(schema.cars)
+      .where(eq(schema.cars.registrationNumber, dto.registrationNumber))
+      .limit(1);
+
+    if (!car) {
+      throw new Error('Car was not created');
+    }
     return car;
   }
 

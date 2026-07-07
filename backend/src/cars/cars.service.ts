@@ -10,10 +10,16 @@ import { QueryCarDto } from './dto/query-car.dto';
 
 function isUniqueViolation(err: unknown): boolean {
   if (!(err instanceof Error)) return false;
-  const msg = err.message.toLowerCase();
+
+  const cause = err.cause !== undefined ? JSON.stringify(err.cause) : '';
+  const combined = [err.message, cause, JSON.stringify(err)]
+    .join(' ')
+    .toLowerCase();
+
   return (
-    msg.includes('unique constraint') ||
-    (msg.includes('unique') && msg.includes('failed'))
+    combined.includes('unique constraint') ||
+    (combined.includes('unique') && combined.includes('failed')) ||
+    combined.includes('sqlite_constraint_unique')
   );
 }
 

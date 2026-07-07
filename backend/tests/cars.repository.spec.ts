@@ -18,27 +18,30 @@ const mockCar = {
 };
 
 function createMockDb() {
-  const mockReturning = jest.fn();
-  const mockValues = jest.fn(() => ({ returning: mockReturning }));
-  const mockInsert = jest.fn(() => ({ values: mockValues }));
+  const mockReturning: jest.Mock = jest.fn().mockResolvedValue([]);
+  const mockValues: jest.Mock = jest.fn(() => ({ returning: mockReturning }));
+  const mockInsert: jest.Mock = jest.fn(() => ({ values: mockValues }));
 
-  const mockOffset = jest.fn(() => ({}));
-  const mockLimit = jest.fn(() => ({ offset: mockOffset }));
-  const mockWhere = jest.fn(() => ({ limit: mockLimit }));
-  const mockFromSelect = jest.fn(() => ({ where: mockWhere }));
-  const mockSelect = jest.fn(() => ({ from: mockFromSelect }));
+  const mockLimit: jest.Mock = jest.fn().mockResolvedValue([]);
+  const mockWhere: jest.Mock = jest.fn(() => ({ limit: mockLimit }));
+  const mockFromSelect: jest.Mock = jest.fn(() => ({ where: mockWhere }));
+  const mockSelect: jest.Mock = jest.fn(() => ({ from: mockFromSelect }));
 
-  const mockWhereCount = jest.fn(() => Promise.resolve([{ count: 0 }]));
-  const mockFromCount = jest.fn(() => ({ where: mockWhereCount }));
-  const mockSelectCount = jest.fn(() => ({ from: mockFromCount }));
+  const mockWhereCount: jest.Mock = jest.fn(() =>
+    Promise.resolve([{ count: 0 }]),
+  );
+  const mockFromCount: jest.Mock = jest.fn(() => ({ where: mockWhereCount }));
+  const mockSelectCount: jest.Mock = jest.fn(() => ({ from: mockFromCount }));
 
-  const mockSet = jest.fn(() => ({
+  const mockSet: jest.Mock = jest.fn(() => ({
     where: jest.fn(() => ({ returning: mockReturning })),
   }));
-  const mockUpdate = jest.fn(() => ({ set: mockSet }));
+  const mockUpdate: jest.Mock = jest.fn(() => ({ set: mockSet }));
 
-  const mockDeleteWhere = jest.fn(() => ({ returning: mockReturning }));
-  const mockDelete = jest.fn(() => ({ where: mockDeleteWhere }));
+  const mockDeleteWhere: jest.Mock = jest.fn(() => ({
+    returning: mockReturning,
+  }));
+  const mockDelete: jest.Mock = jest.fn(() => ({ where: mockDeleteWhere }));
 
   return {
     insert: mockInsert,
@@ -52,7 +55,6 @@ function createMockDb() {
     _mockValues: mockValues,
     _mockWhere: mockWhere,
     _mockLimit: mockLimit,
-    _mockOffset: mockOffset,
     _mockWhereCount: mockWhereCount,
     _mockSet: mockSet,
     _mockDeleteWhere: mockDeleteWhere,
@@ -76,7 +78,7 @@ describe('CarsRepository', () => {
 
   describe('create', () => {
     it('inserts into the cars table and returns the created car', async () => {
-      mockDb._mockReturning.mockResolvedValue([mockCar]);
+      mockDb._mockLimit.mockResolvedValue([mockCar]);
 
       const dto = {
         manufacturer: 'Toyota',
