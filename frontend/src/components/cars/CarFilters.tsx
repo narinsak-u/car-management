@@ -1,13 +1,32 @@
-import { Search, Filter, ArrowUpDown } from "lucide-react";
+import { Search, Filter, ArrowUpAZ, ArrowDownZA } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { CarStatus } from "@/types/car";
 
 interface CarFiltersProps {
   search: string;
   onSearchChange: (value: string) => void;
+  sortOrder: "asc" | "desc";
+  onToggleSort: () => void;
+  statusFilter: CarStatus | "all";
+  onStatusChange: (status: CarStatus | "all") => void;
 }
 
-export function CarFilters({ search, onSearchChange }: CarFiltersProps) {
+export function CarFilters({
+  search,
+  onSearchChange,
+  sortOrder,
+  onToggleSort,
+  statusFilter,
+  onStatusChange,
+}: CarFiltersProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="relative flex-1 max-w-sm">
@@ -20,13 +39,25 @@ export function CarFilters({ search, onSearchChange }: CarFiltersProps) {
         />
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" size="sm">
-          <Filter data-icon="inline-start" />
-          Filter
-        </Button>
-        <Button variant="outline" size="sm">
-          <ArrowUpDown data-icon="inline-start" />
-          Sort
+        <Select value={statusFilter} onValueChange={onStatusChange}>
+          <SelectTrigger className="w-35">
+            <Filter data-icon="inline-start" />
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="available">Available</SelectItem>
+            <SelectItem value="maintenance">Maintenance</SelectItem>
+            <SelectItem value="in_transit">In Transit</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button variant="outline" size="sm" onClick={onToggleSort}>
+          {sortOrder === "desc" ? (
+            <ArrowDownZA data-icon="inline-start" />
+          ) : (
+            <ArrowUpAZ data-icon="inline-start" />
+          )}
+          {sortOrder === "desc" ? "Newest" : "Oldest"}
         </Button>
       </div>
     </div>

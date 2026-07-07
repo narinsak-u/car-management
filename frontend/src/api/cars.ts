@@ -20,6 +20,7 @@ export interface QueryParams {
   model?: string;
   status?: string;
   search?: string;
+  sortOrder?: string;
 }
 
 export const carsApi = {

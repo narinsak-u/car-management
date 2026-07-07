@@ -25,6 +25,10 @@ export function AllCarsPage() {
     showingTo,
     totalFiltered,
     refresh,
+    sortOrder,
+    toggleSort,
+    statusFilter,
+    setStatus,
   } = useCarFilter();
 
   const deleteCar = useDeleteCar();
@@ -62,7 +66,14 @@ export function AllCarsPage() {
 
       <Card>
         <CardContent className="p-4">
-          <CarFilters search={search} onSearchChange={setSearch} />
+          <CarFilters
+            search={search}
+            onSearchChange={setSearch}
+            sortOrder={sortOrder}
+            onToggleSort={toggleSort}
+            statusFilter={statusFilter}
+            onStatusChange={setStatus}
+          />
 
           <div className="mt-4">
             <CarTable cars={cars} onDelete={handleDelete} loading={loading} />

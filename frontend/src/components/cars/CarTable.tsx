@@ -46,9 +46,6 @@ export function CarTable({ cars, onDelete, loading }: CarTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-12">
-            <span className="sr-only">Select</span>
-          </TableHead>
           <TableHead>Registration</TableHead>
           <TableHead>Make & Model</TableHead>
           <TableHead className="hidden sm:table-cell">Year</TableHead>
@@ -60,31 +57,19 @@ export function CarTable({ cars, onDelete, loading }: CarTableProps) {
       <TableBody>
         {loading ? (
           <TableRow>
-            <TableCell
-              colSpan={7}
-              className="text-center py-8 text-muted-foreground"
-            >
+            <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
               Loading...
             </TableCell>
           </TableRow>
         ) : cars.length === 0 ? (
           <TableRow>
-            <TableCell
-              colSpan={7}
-              className="text-center py-8 text-muted-foreground"
-            >
+            <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
               No vehicles found.
             </TableCell>
           </TableRow>
         ) : (
           cars.map((car) => (
             <TableRow key={car.id}>
-              <TableCell>
-                <input
-                  type="checkbox"
-                  className="size-4 rounded border-gray-300"
-                />
-              </TableCell>
               <TableCell>
                 <span className="font-mono font-medium">
                   {car.registrationNumber}

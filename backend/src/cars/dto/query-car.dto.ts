@@ -3,6 +3,7 @@ import { IsOptional, IsInt, Min, Max, IsString, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 
 const CAR_STATUSES = ['available', 'maintenance', 'in_transit'] as const;
+const SORT_ORDERS = ['asc', 'desc'] as const;
 
 export class QueryCarDto {
   @ApiPropertyOptional({ example: 1, default: 1 })
@@ -40,4 +41,10 @@ export class QueryCarDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @ApiPropertyOptional({ example: 'desc', default: 'desc' })
+  @IsOptional()
+  @IsString()
+  @IsIn(SORT_ORDERS)
+  sortOrder?: string = 'desc';
 }

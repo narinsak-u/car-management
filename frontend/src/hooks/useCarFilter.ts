@@ -2,18 +2,23 @@ import { useState, useCallback, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCarList, useCarStats } from "@/hooks/useCars";
 import { carKeys } from "@/api/queryKeys";
+import type { CarStatus } from "@/types/car";
 
 const ITEMS_PER_PAGE = 10;
 
 export function useCarFilter() {
   const [search, setSearchRaw] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [statusFilter, setStatusFilter] = useState<CarStatus | "all">("all");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const queryClient = useQueryClient();
 
   const queryParams = {
     page: currentPage,
     search: search || undefined,
+    sortOrder,
+    status: statusFilter !== "all" ? statusFilter : undefined,
   };
 
   const { data: listResult, isLoading, error } = useCarList(queryParams);
@@ -29,6 +34,16 @@ export function useCarFilter() {
 
   const setPage = useCallback((page: number) => {
     setCurrentPage(page);
+  }, []);
+
+  const toggleSort = useCallback(() => {
+    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    setCurrentPage(1);
+  }, []);
+
+  const setStatus = useCallback((status: CarStatus | "all") => {
+    setStatusFilter(status);
+    setCurrentPage(1);
   }, []);
 
   const refresh = useCallback(() => {
@@ -56,5 +71,9 @@ export function useCarFilter() {
     totalFiltered,
     ITEMS_PER_PAGE,
     refresh,
+    sortOrder,
+    toggleSort,
+    statusFilter,
+    setStatus,
   };
 }

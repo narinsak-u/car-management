@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { LibSQLDatabase } from 'drizzle-orm/libsql';
-import { eq, like, count, and, or, SQL } from 'drizzle-orm';
+import { eq, like, count, and, or, asc, desc, SQL } from 'drizzle-orm';
 import * as schema from '../database/schema';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
@@ -73,10 +73,16 @@ export class CarsRepository {
     const offset = ((query.page ?? 1) - 1) * (query.limit ?? 10);
     const limit = query.limit ?? 10;
 
+    const orderBy =
+      query.sortOrder === 'asc'
+        ? asc(schema.cars.createdAt)
+        : desc(schema.cars.createdAt);
+
     const dataPromise = this.db
       .select()
       .from(schema.cars)
       .where(where)
+      .orderBy(orderBy)
       .limit(limit)
       .offset(offset);
 

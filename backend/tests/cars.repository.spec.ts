@@ -22,8 +22,13 @@ function createMockDb() {
   const mockValues: jest.Mock = jest.fn(() => ({ returning: mockReturning }));
   const mockInsert: jest.Mock = jest.fn(() => ({ values: mockValues }));
 
-  const mockLimit: jest.Mock = jest.fn().mockResolvedValue([]);
-  const mockWhere: jest.Mock = jest.fn(() => ({ limit: mockLimit }));
+  const mockOffset: jest.Mock = jest.fn().mockResolvedValue([]);
+  const mockLimit: jest.Mock = jest.fn(() => ({ offset: mockOffset }));
+  const mockOrderBy: jest.Mock = jest.fn(() => ({ limit: mockLimit }));
+  const mockWhere: jest.Mock = jest.fn(() => ({
+    orderBy: mockOrderBy,
+    limit: mockLimit,
+  }));
   const mockFromSelect: jest.Mock = jest.fn(() => ({ where: mockWhere }));
   const mockSelect: jest.Mock = jest.fn(() => ({ from: mockFromSelect }));
 
@@ -55,6 +60,8 @@ function createMockDb() {
     _mockValues: mockValues,
     _mockWhere: mockWhere,
     _mockLimit: mockLimit,
+    _mockOffset: mockOffset,
+    _mockOrderBy: mockOrderBy,
     _mockWhereCount: mockWhereCount,
     _mockSet: mockSet,
     _mockDeleteWhere: mockDeleteWhere,
