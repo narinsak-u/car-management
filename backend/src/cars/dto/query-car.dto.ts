@@ -1,6 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsInt, Min, Max, IsString } from 'class-validator';
+import { IsOptional, IsInt, Min, Max, IsString, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
+
+const CAR_STATUSES = ['available', 'maintenance', 'in_transit'] as const;
 
 export class QueryCarDto {
   @ApiPropertyOptional({ example: 1, default: 1 })
@@ -21,10 +23,21 @@ export class QueryCarDto {
   @ApiPropertyOptional({ example: 'Toyota' })
   @IsOptional()
   @IsString()
-  brand?: string;
+  manufacturer?: string;
 
   @ApiPropertyOptional({ example: 'Camry' })
   @IsOptional()
   @IsString()
   model?: string;
+
+  @ApiPropertyOptional({ example: 'available' })
+  @IsOptional()
+  @IsString()
+  @IsIn(CAR_STATUSES)
+  status?: string;
+
+  @ApiPropertyOptional({ example: 'ABC' })
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

@@ -1,20 +1,23 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsString,
   IsInt,
   Min,
   Max,
-  IsNumber,
   MinLength,
+  IsOptional,
+  IsIn,
 } from 'class-validator';
+
+const CAR_STATUSES = ['available', 'maintenance', 'in_transit'] as const;
 
 export class CreateCarDto {
   @ApiProperty({ example: 'Toyota' })
   @IsString()
   @IsNotEmpty()
   @MinLength(1)
-  brand: string;
+  manufacturer: string;
 
   @ApiProperty({ example: 'Camry' })
   @IsString()
@@ -28,18 +31,23 @@ export class CreateCarDto {
   @Max(2100)
   year: number;
 
-  @ApiProperty({ example: 'ABC-1234' })
-  @IsString()
-  @IsNotEmpty()
-  licensePlate: string;
-
   @ApiProperty({ example: 'Red' })
   @IsString()
   @IsNotEmpty()
   color: string;
 
-  @ApiProperty({ example: 25000 })
-  @IsNumber()
-  @Min(0)
-  price: number;
+  @ApiProperty({ example: 'ABC-1234' })
+  @IsString()
+  @IsNotEmpty()
+  registrationNumber: string;
+
+  @ApiProperty({ example: 'available', enum: CAR_STATUSES })
+  @IsString()
+  @IsIn(CAR_STATUSES)
+  status: string;
+
+  @ApiPropertyOptional({ example: 'Recently serviced' })
+  @IsOptional()
+  @IsString()
+  notes?: string;
 }

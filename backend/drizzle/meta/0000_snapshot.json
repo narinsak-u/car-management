@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ffc3c8a9-0b10-4882-a3dd-b79bbc46b920",
+  "id": "f9fa5238-ab4e-49bb-be60-a96c16dce105",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "cars": {
@@ -14,8 +14,8 @@
           "notNull": true,
           "autoincrement": true
         },
-        "brand": {
-          "name": "brand",
+        "manufacturer": {
+          "name": "manufacturer",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -35,8 +35,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "license_plate": {
-          "name": "license_plate",
+        "registration_number": {
+          "name": "registration_number",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -49,11 +49,19 @@
           "notNull": true,
           "autoincrement": false
         },
-        "price": {
-          "name": "price",
-          "type": "real",
+        "status": {
+          "name": "status",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false,
+          "default": "'available'"
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "created_at": {
@@ -72,10 +80,10 @@
         }
       },
       "indexes": {
-        "cars_license_plate_unique": {
-          "name": "cars_license_plate_unique",
+        "cars_registration_number_unique": {
+          "name": "cars_registration_number_unique",
           "columns": [
-            "license_plate"
+            "registration_number"
           ],
           "isUnique": true
         }

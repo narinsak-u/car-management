@@ -1,13 +1,16 @@
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 
 export const cars = sqliteTable('cars', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  brand: text('brand').notNull(),
+  manufacturer: text('manufacturer').notNull(),
   model: text('model').notNull(),
   year: integer('year').notNull(),
-  licensePlate: text('license_plate').notNull().unique(),
+  registrationNumber: text('registration_number').notNull().unique(),
   color: text('color').notNull(),
-  price: real('price').notNull(),
+  status: text('status', { enum: ['available', 'maintenance', 'in_transit'] })
+    .notNull()
+    .default('available'),
+  notes: text('notes'),
   createdAt: text('created_at')
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
