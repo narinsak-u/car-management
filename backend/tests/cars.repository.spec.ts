@@ -121,7 +121,8 @@ describe('CarsRepository', () => {
       const dataResult = Promise.resolve([mockCar]);
       const offsetFn = jest.fn(() => dataResult);
       const limitFn = jest.fn(() => ({ offset: offsetFn }));
-      const whereFn = jest.fn(() => ({ limit: limitFn }));
+      const orderByFn = jest.fn(() => ({ limit: limitFn }));
+      const whereFn = jest.fn(() => ({ orderBy: orderByFn }));
       const fromFn = jest.fn(() => ({ where: whereFn }));
       (mockDb.select as jest.Mock).mockImplementation((fields?: any) => {
         if (fields?.count) return { from: () => countQuery };
@@ -146,7 +147,8 @@ describe('CarsRepository', () => {
       };
       const offsetFn = jest.fn(() => Promise.resolve([]));
       const limitFn = jest.fn(() => ({ offset: offsetFn }));
-      const whereFn = jest.fn(() => ({ limit: limitFn }));
+      const orderByFn = jest.fn(() => ({ limit: limitFn }));
+      const whereFn = jest.fn(() => ({ orderBy: orderByFn }));
       const fromFn = jest.fn(() => ({ where: whereFn }));
       (mockDb.select as jest.Mock).mockImplementation((fields?: any) => {
         if (fields?.count) return { from: () => countQuery };
