@@ -2,6 +2,8 @@
 
 A full-stack car inventory management system with CRUD operations, server-side sorting, pagination, status filtering, duplicate detection, and a clean UI.
 
+![Home page](frontend/public/home.png)
+
 ## Tech Stack
 
 ### Backend
@@ -74,6 +76,8 @@ car-management/
 - **Swagger Docs** — Interactive API explorer at `/api`
 - **Responsive UI** — Mobile-friendly sidebar layout
 
+![Dashboard](frontend/public/dashboard.png)
+
 ## Prerequisites
 
 - Node.js 20+
@@ -110,14 +114,14 @@ The frontend sends API requests to `http://localhost:4000` (configured in `.env`
 
 ### Backend
 
-| Script               | Description                    |
-| -------------------- | ------------------------------ |
-| `npm run start:dev`  | Start dev server with watch    |
-| `npm run build`      | Build for production           |
-| `npm run test`       | Run tests                      |
-| `npm run test:cov`   | Run tests with coverage        |
-| `npm run seed`       | Seed database with sample data |
-| `npm run lint`       | Lint and auto-fix              |
+| Script              | Description                    |
+| ------------------- | ------------------------------ |
+| `npm run start:dev` | Start dev server with watch    |
+| `npm run build`     | Build for production           |
+| `npm run test`      | Run tests                      |
+| `npm run test:cov`  | Run tests with coverage        |
+| `npm run seed`      | Seed database with sample data |
+| `npm run lint`      | Lint and auto-fix              |
 
 ### Frontend
 
