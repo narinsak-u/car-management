@@ -1,15 +1,37 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { CarsRepository } from './cars.repository';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { QueryCarDto } from './dto/query-car.dto';
+
+function isUniqueViolation(err: unknown): boolean {
+  if (!(err instanceof Error)) return false;
+  const msg = err.message.toLowerCase();
+  return (
+    msg.includes('unique constraint') ||
+    (msg.includes('unique') && msg.includes('failed'))
+  );
+}
 
 @Injectable()
 export class CarsService {
   constructor(private readonly repository: CarsRepository) {}
 
   async create(dto: CreateCarDto) {
-    return this.repository.create(dto);
+    try {
+      return await this.repository.create(dto);
+    } catch (err) {
+      if (isUniqueViolation(err)) {
+        throw new ConflictException(
+          `Car with registration number "${dto.registrationNumber}" already exists`,
+        );
+      }
+      throw err;
+    }
   }
 
   async findAll(query: QueryCarDto) {
@@ -26,11 +48,20 @@ export class CarsService {
 
   async update(id: number, dto: UpdateCarDto) {
     await this.findById(id);
-    const updated = await this.repository.update(id, dto);
-    if (!updated) {
-      throw new NotFoundException(`Car with id ${id} not found`);
+    try {
+      const updated = await this.repository.update(id, dto);
+      if (!updated) {
+        throw new NotFoundException(`Car with id ${id} not found`);
+      }
+      return updated;
+    } catch (err) {
+      if (isUniqueViolation(err)) {
+        throw new ConflictException(
+          `Car with registration number "${dto.registrationNumber}" already exists`,
+        );
+      }
+      throw err;
     }
-    return updated;
   }
 
   async delete(id: number) {

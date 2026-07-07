@@ -11,12 +11,8 @@ export const cars = sqliteTable('cars', {
     .notNull()
     .default('available'),
   notes: text('notes'),
-  createdAt: text('created_at')
-    .notNull()
-    .$defaultFn(() => new Date().toISOString()),
-  updatedAt: text('updated_at')
-    .notNull()
-    .$defaultFn(() => new Date().toISOString()),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
 });
 
 export type Car = typeof cars.$inferSelect;

@@ -90,7 +90,14 @@ describe('CarsRepository', () => {
       const result = await repository.create(dto);
 
       expect(mockDb.insert).toHaveBeenCalledWith(schema.cars);
-      expect(mockDb._mockValues).toHaveBeenCalledWith(dto);
+      expect(mockDb._mockValues).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...dto,
+          notes: null,
+          createdAt: expect.any(String) as string,
+          updatedAt: expect.any(String) as string,
+        }),
+      );
       expect(result).toEqual(mockCar);
     });
   });

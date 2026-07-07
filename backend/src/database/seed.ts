@@ -2,6 +2,8 @@ import { count } from 'drizzle-orm';
 import { db } from './db';
 import { cars } from './schema';
 
+const now = new Date().toISOString();
+
 const seedData = [
   {
     manufacturer: 'Mercedes-Benz',
@@ -143,7 +145,11 @@ async function seed() {
   }
 
   for (const car of seedData) {
-    await db.insert(cars).values(car);
+    await db.insert(cars).values({
+      ...car,
+      createdAt: now,
+      updatedAt: now,
+    });
   }
 
   console.log(`Inserted ${seedData.length} cars.`);

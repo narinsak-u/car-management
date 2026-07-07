@@ -44,7 +44,7 @@ export class CreateCarDto {
   @ApiProperty({ example: 'available', enum: CAR_STATUSES })
   @IsString()
   @IsIn(CAR_STATUSES)
-  status: string;
+  status: 'available' | 'maintenance' | 'in_transit';
 
   @ApiPropertyOptional({ example: 'Recently serviced' })
   @IsOptional()

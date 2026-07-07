@@ -13,9 +13,20 @@ export class CarsRepository {
   ) {}
 
   async create(dto: CreateCarDto) {
+    const now = new Date().toISOString();
     const [car] = await this.db
       .insert(schema.cars)
-      .values(dto as typeof schema.cars.$inferInsert)
+      .values({
+        manufacturer: dto.manufacturer,
+        model: dto.model,
+        year: dto.year,
+        registrationNumber: dto.registrationNumber,
+        color: dto.color,
+        status: dto.status,
+        notes: dto.notes ?? null,
+        createdAt: now,
+        updatedAt: now,
+      })
       .returning();
     return car;
   }
@@ -97,7 +108,7 @@ export class CarsRepository {
     const [car] = await this.db
       .update(schema.cars)
       .set({
-        ...(dto as typeof schema.cars.$inferInsert),
+        ...dto,
         updatedAt: new Date().toISOString(),
       })
       .where(eq(schema.cars.id, id))
