@@ -49,13 +49,16 @@ export function useCarForm() {
       notes: notes || undefined,
     };
 
-    if (isEditing && id) {
-      await updateCar.mutateAsync({ id: Number(id), data });
-    } else {
-      await createCar.mutateAsync(data);
+    try {
+      if (isEditing && id) {
+        await updateCar.mutateAsync({ id: Number(id), data });
+      } else {
+        await createCar.mutateAsync(data);
+      }
+      navigate("/cars");
+    } catch {
+      // Error is already displayed via createCar.error / updateCar.error
     }
-
-    navigate("/cars");
   };
 
   return {
